@@ -6,7 +6,7 @@ function App() {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Marayaw! I'm TausugBot. Type English words or phrases and I'll translate them to Tausug for you!",
+      text: "Welcome to TausugBot - Your English to Tausug Translation Assistant. I am here to help you translate English words and phrases into the Tausug language. Please type your English text, and I will provide you with accurate Tausug translations along with guidance and support.",
       sender: 'bot',
       timestamp: new Date()
     }
