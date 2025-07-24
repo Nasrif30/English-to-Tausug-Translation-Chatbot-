@@ -87,6 +87,7 @@
   flex: 1;
   overflow: hidden;
   padding: 1rem;
+  padding-bottom: 120px;
   display: flex;
   flex-direction: column;
 }
@@ -211,6 +212,11 @@
   padding: 1rem;
   background: rgba(0, 66, 37, 0.8);
   border-top: 1px solid rgba(240, 240, 240, 0.1);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
 }
 
 .input-wrapper {
