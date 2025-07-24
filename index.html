@@ -384,20 +384,34 @@
             .header-content h1 {
                 font-size: 1.1rem;
             }
-            
+
             .message-content {
                 max-width: 90%;
                 padding: 0.6rem 0.8rem;
             }
-            
+
             .help-section {
                 margin: 0 0.5rem 0.5rem 0.5rem;
                 padding: 0.75rem;
             }
-            
+
+            .input-wrapper {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .message-input {
+                flex: 1;
+                min-width: 0;
+                font-size: 0.9rem;
+            }
+
             .send-button {
-                padding: 0.6rem 0.8rem;
-                font-size: 0.85rem;
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+                white-space: nowrap;
+                flex-shrink: 0;
+                min-width: 80px;
             }
         }
     </style>
@@ -608,7 +622,7 @@
 
                 // Check for special identity questions
                 if (lowerInput === 'who are you?' || lowerInput === 'who are you' || lowerInput === 'isiyu kaw?' || lowerInput === 'isiyu kaw') {
-                    botResponse = "CREATED BY MY CREATOR ALNASRIFJH. My creator gave me 10% of his thinking and knowledge, and I continue to learn more every day. I am designed to respond, assist, and motivate based on what my creator has taught me. My purpose is to help, guide, and inspire anyone who interacts with me.";
+                    botResponse = "Created by AlnasrifJH";
                 }
                 // Check for secret message trigger (Nanalyn)
                 else if (lowerInput === 'nanalyn') {

@@ -74,7 +74,7 @@ function App() {
       if (lowerInput === 'who are you?' || lowerInput === 'who are you' || lowerInput === 'isiyu kaw?' || lowerInput === 'isiyu kaw') {
         botResponse = {
           id: Date.now() + 1,
-          text: "CREATED BY MY CREATOR ALNASRIFJH. My creator gave me 10% of his thinking and knowledge, and I continue to learn more every day. I am designed to respond, assist, and motivate based on what my creator has taught me. My purpose is to help, guide, and inspire anyone who interacts with me.",
+          text: "Created by AlnasrifJH",
           sender: 'bot',
           timestamp: new Date()
         };
