@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TausugBot - English to Tausug Translator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background-color: #004225;
+            color: #f0f0f0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .app-header {
+            background: linear-gradient(135deg, #004225 0%, #005a30 100%);
+            padding: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            border-bottom: 1px solid #006633;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-content h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .bot-avatar {
+            font-size: 2rem;
+            margin-right: 1rem;
+        }
+
+        .help-button {
+            background: rgba(240, 240, 240, 0.1);
+            border: 1px solid rgba(240, 240, 240, 0.2);
+            color: #f0f0f0;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+        }
+
+        .help-button:hover {
+            background: rgba(240, 240, 240, 0.2);
+            transform: scale(1.05);
+        }
+
+        /* Help Section */
+        .help-section {
+            background: rgba(0, 102, 51, 0.8);
+            padding: 1rem;
+            margin: 0 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            animation: slideDown 0.3s ease;
+            display: none;
+        }
+
+        .help-section.show {
+            display: block;
+        }
+
+        .help-section h3 {
+            margin: 0 0 0.5rem 0;
+            color: #f0f0f0;
+            font-size: 1.1rem;
+        }
+
+        .help-section ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .help-section li {
+            margin: 0.3rem 0;
+            color: #e0e0e0;
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            overflow: hidden;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 0.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Message Styles */
+        .message {
+            display: flex;
+            margin: 1rem 0;
+            animation: fadeInUp 0.4s ease;
+        }
+
+        .message.user {
+            justify-content: flex-end;
+        }
+
+        .message.bot {
+            justify-content: flex-start;
+        }
+
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(240, 240, 240, 0.1);
+            margin: 0 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            background: rgba(0, 102, 51, 0.8);
+        }
+
+        .message-content {
+            max-width: 70%;
+            background: rgba(240, 240, 240, 0.1);
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            position: relative;
+        }
+
+        .message.user .message-content {
+            background: rgba(0, 102, 51, 0.8);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-content {
+            background: rgba(240, 240, 240, 0.15);
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            background: rgba(240, 240, 240, 0.15) !important;
+            border-bottom-left-radius: 4px !important;
+            padding: 0.75rem 1rem !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 4px;
+        }
+
+        .typing-dots span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            animation: typingBounce 1.4s infinite ease-in-out;
+        }
+
+        .typing-dots span:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dots span:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        .typing-dots span:nth-child(3) {
+            animation-delay: 0s;
+        }
+
+        /* Secret Message Styling */
+        .message.secret .message-content {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-text {
+            margin-bottom: 0.25rem;
+            line-height: 1.4;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        /* Input Container */
+        .input-container {
+            padding: 1rem;
+            background: rgba(0, 66, 37, 0.8);
+            border-top: 1px solid rgba(240, 240, 240, 0.1);
+        }
+
+        .input-wrapper {
+            display: flex;
+            max-width: 800px;
+            margin: 0 auto;
+            gap: 0.5rem;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            border: 1px solid rgba(240, 240, 240, 0.2);
+            border-radius: 25px;
+            background: rgba(240, 240, 240, 0.1);
+            color: #f0f0f0;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .message-input::placeholder {
+            color: rgba(240, 240, 240, 0.6);
+        }
+
+        .message-input:focus {
+            border-color: rgba(240, 240, 240, 0.4);
+            background: rgba(240, 240, 240, 0.15);
+            box-shadow: 0 0 0 2px rgba(240, 240, 240, 0.1);
+        }
+
+        .send-button {
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, #00cc66, #009944);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .send-button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #00b359, #007a33);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 204, 102, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typingBounce {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .app-header {
+                padding: 0.75rem;
+            }
+            
+            .header-content h1 {
+                font-size: 1.3rem;
+            }
+            
+            .bot-avatar {
+                font-size: 1.5rem;
+                margin-right: 0.5rem;
+            }
+            
+            .help-button {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .chat-container {
+                padding: 0.5rem;
+            }
+            
+            .message-content {
+                max-width: 85%;
+            }
+            
+            .message-avatar {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+            
+            .input-container {
+                padding: 0.75rem;
+            }
+            
+            .input-wrapper {
+                gap: 0.25rem;
+            }
+            
+            .message-input {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.9rem;
+            }
+            
+            .send-button {
+                padding: 0.6rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-content h1 {
+                font-size: 1.1rem;
+            }
+            
+            .message-content {
+                max-width: 90%;
+                padding: 0.6rem 0.8rem;
+            }
+            
+            .help-section {
+                margin: 0 0.5rem 0.5rem 0.5rem;
+                padding: 0.75rem;
+            }
+            
+            .send-button {
+                padding: 0.6rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="bot-avatar">🤖</div>
+                <h1>TausugBot</h1>
+                <button class="help-button" onclick="toggleHelp()" title="Help">❓</button>
+            </div>
+        </header>
+
+        <!-- Help Section -->
+        <div class="help-section" id="helpSection">
+            <h3>How to Use TausugBot:</h3>
+            <ul>
+                <li>Type English words/phrases</li>
+                <li>Press Translate or Enter to see Tausug meaning</li>
+                <li>Complete sentences get "Yari in result:" responses</li>
+                <li>Incomplete phrases get "Unu yadtu?" (What's that?)</li>
+                <li>Ask "Who are you?" to learn about TausugBot</li>
+                <li>Missing translation? Add to translations.json</li>
+            </ul>
+        </div>
+
+        <!-- Chat Area -->
+        <div class="chat-container">
+            <div class="messages-container" id="messagesContainer">
+                <!-- Messages will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-container">
+            <div class="input-wrapper">
+                <input
+                    type="text"
+                    id="messageInput"
+                    placeholder="Type English words or phrases..."
+                    class="message-input"
+                    onkeypress="handleKeyPress(event)"
+                />
+                <button onclick="handleTranslate()" class="send-button" id="sendButton">
+                    Translate
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Translations data
+        const translations = {
+            "hello": "marayaw",
+            "goodbye": "assalam",
+            "thank you": "magsukul",
+            "please": "palihug",
+            "yes": "oo",
+            "no": "indi",
+            "good morning": "marayaw adlaw",
+            "good evening": "marayaw kulop",
+            "how are you": "maunu kaw",
+            "what is your name": "unu ngalan mu",
+            "my name is": "ngalan ku",
+            "water": "tubig",
+            "food": "kaun",
+            "house": "bay",
+            "family": "pamilya",
+            "friend": "higad",
+            "love": "lasa",
+            "beautiful": "malingkat",
+            "good": "marayaw",
+            "bad": "mabuga",
+            "big": "dakula",
+            "small": "gamay",
+            "happy": "malipayon",
+            "sad": "masusa",
+            "eat": "kaun",
+            "drink": "inum",
+            "sleep": "katug",
+            "work": "hinang",
+            "study": "tiyun",
+            "read": "basa",
+            "write": "surat",
+            "speak": "bissara",
+            "listen": "dungug",
+            "see": "kita",
+            "come": "mari",
+            "go": "kadtu",
+            "sit": "lingkud",
+            "stand": "tindug",
+            "walk": "panaw",
+            "run": "dagan",
+            "money": "pilak",
+            "time": "waktu",
+            "day": "adlaw",
+            "night": "gabii",
+            "morning": "aga",
+            "afternoon": "hapon",
+            "evening": "kulop",
+            "today": "karung adlawa",
+            "tomorrow": "ugma",
+            "yesterday": "kagahapon",
+            "week": "simana",
+            "month": "bulan",
+            "year": "tuig",
+            "one": "usa",
+            "two": "duha",
+            "three": "tulu",
+            "four": "upat",
+            "five": "lima",
+            "six": "unum",
+            "seven": "pitu",
+            "eight": "walu",
+            "nine": "siyam",
+            "ten": "napulu"
+        };
+
+        let messages = [];
+        let isTyping = false;
+
+        // Initialize the app
+        function init() {
+            addMessage("Marayaw! I'm TausugBot. Type English words or phrases and I'll translate them to Tausug for you!", 'bot');
+            scrollToBottom();
+        }
+
+        function toggleHelp() {
+            const helpSection = document.getElementById('helpSection');
+            helpSection.classList.toggle('show');
+        }
+
+        function addMessage(text, sender, isSecret = false) {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const messageId = Date.now();
+            const timestamp = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender} ${isSecret ? 'secret' : ''}`;
+            messageDiv.innerHTML = `
+                ${sender === 'bot' ? '<div class="message-avatar">🤖</div>' : ''}
+                <div class="message-content">
+                    <div class="message-text">${text.replace(/\n/g, '<br>')}</div>
+                    <div class="message-time">${timestamp}</div>
+                </div>
+                ${sender === 'user' ? '<div class="message-avatar user-avatar">👤</div>' : ''}
+            `;
+
+            messagesContainer.appendChild(messageDiv);
+            messages.push({ id: messageId, text, sender, timestamp, isSecret });
+            scrollToBottom();
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('messagesContainer');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content typing-indicator">
+                    <div class="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function scrollToBottom() {
+            const messagesContainer = document.getElementById('messagesContainer');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleTranslate() {
+            const input = document.getElementById('messageInput');
+            const inputText = input.value.trim();
+
+            if (!inputText) return;
+
+            // Add user message
+            addMessage(inputText, 'user');
+
+            // Show typing indicator
+            showTypingIndicator();
+            isTyping = true;
+
+            // Process translation with typing animation
+            setTimeout(() => {
+                // Hide typing indicator
+                hideTypingIndicator();
+                isTyping = false;
+
+                let botResponse;
+                const lowerInput = inputText.toLowerCase();
+
+                // Check for special identity questions
+                if (lowerInput === 'who are you?' || lowerInput === 'who are you' || lowerInput === 'isiyu kaw?' || lowerInput === 'isiyu kaw') {
+                    botResponse = "CREATED BY MY CREATOR ALNASRIFJH. My creator gave me 10% of his thinking and knowledge, and I continue to learn more every day. I am designed to respond, assist, and motivate based on what my creator has taught me. My purpose is to help, guide, and inspire anyone who interacts with me.";
+                }
+                // Check for secret message trigger (Nanalyn)
+                else if (lowerInput === 'nanalyn') {
+                    botResponse = `Hi Nalyn,
+
+If natrigger mu in secret word, I want to say sorry. I never meant to hurt you in any way. I just want you to know that I'm giving you my full support in everything you do. Please keep going, stay motivated for your future, and don't lose hope even when things get hard.
+
+Always trust Allah because He knows what's best for you. Every challenge you face has a reason, and every tear you cry will be replaced with something better. I believe in you, Nalyn, and I know you can do amazing things if you keep moving forward.`;
+                    addMessage(botResponse, 'bot', true);
+                    input.value = '';
+                    updateSendButton();
+                    return;
+                }
+                // Check for secret message trigger (Petchay)
+                else if (lowerInput === 'petchay') {
+                    botResponse = `Hi Petchayyy,
+
+Good girl (pats head)
+
+I just want you to know that I'm giving you my full support in everything you do. Please keep going, stay motivated for your future and don't lose hope even when things get hard. Always trust Allah because He knows what's best for you. Every challenge you face has a reason and every tear you cry will be replaced with something better. I believe in you, Petchay, and I know you can do amazing things if you keep moving forward. I know you want to be a doctor someday and I hope you never forget that dream. You have what it takes to make it happen, your hard work and patience will pay off. In the end you'll help a lot of people and make your family proud.`;
+                    addMessage(botResponse, 'bot', true);
+                    input.value = '';
+                    updateSendButton();
+                    return;
+                }
+                // Check for expressions of problems or sadness
+                else if (lowerInput.includes('i have') && (lowerInput.includes('problem') || lowerInput.includes('issue')) ||
+                         lowerInput.includes('i am sad') || lowerInput.includes('im sad') || lowerInput.includes('i feel sad') ||
+                         lowerInput.includes('i am depressed') || lowerInput.includes('im depressed') ||
+                         lowerInput.includes('i am stressed') || lowerInput.includes('im stressed') ||
+                         lowerInput.includes('i am worried') || lowerInput.includes('im worried') ||
+                         lowerInput.includes('i need help') || lowerInput.includes('help me') ||
+                         lowerInput.includes('i am struggling') || lowerInput.includes('im struggling') ||
+                         lowerInput.includes('life is hard') || lowerInput.includes('difficult time') ||
+                         lowerInput.includes('going through') && lowerInput.includes('hard')) {
+                    botResponse = `"Indeed, with hardship comes ease."
+(Qur'an 94:6)
+
+Life may feel heavy now, but every hardship you face is never without relief. Allah places challenges in your path not to break you, but to raise you in strength and faith. The patience you show today will become a source of reward tomorrow.
+
+"So be patient. Indeed, the promise of Allah is truth."
+(Qur'an 30:60)
+
+Your dreams — whether it's to finish your studies, become a doctor, or help others — are not impossible for Allah. Take every step with effort and prayer, and trust that what is written for you will come at the right moment.
+
+The Prophet Muhammad ﷺ said:
+"When Allah wants good for someone, He afflicts them with trials."
+(Sahih Bukhari 5645)
+
+This means your struggles are signs that Allah sees good in you. Every tear, every sleepless night, every moment of doubt — they are all purifying you, preparing you for something far better than you can imagine.
+
+"Call upon Me, I will respond to you."
+(Qur'an 40:60)
+
+Never stop making du'a. Even in your quiet moments, Allah hears every word and knows every dream in your heart. Keep trusting Him, keep moving forward, and don't give up — because victory belongs to those who are patient and steadfast.`;
+                    addMessage(botResponse, 'bot', true);
+                    input.value = '';
+                    updateSendButton();
+                    return;
+                }
+                // Check if sentence is complete (has punctuation or is a complete phrase)
+                else if (isCompleteSentence(inputText)) {
+                    // Normal translation logic for complete sentences
+                    const translation = translations[lowerInput];
+
+                    if (translation) {
+                        botResponse = `Yari in result: "${inputText}" in Tausug is "${translation}"`;
+                    } else {
+                        botResponse = "Yari in result: No translation found. Try another word or phrase, or add it to translations.json!";
+                    }
+                }
+                // Incomplete sentence
+                else {
+                    botResponse = "Unu yadtu?"; // What's that?
+                }
+
+                addMessage(botResponse, 'bot');
+            }, 1500); // Increased delay to show typing animation
+
+            input.value = '';
+            updateSendButton();
+        }
+
+        // Function to check if a sentence is complete
+        function isCompleteSentence(text) {
+            // Check if it ends with punctuation
+            if (/[.!?]$/.test(text.trim())) {
+                return true;
+            }
+
+            // Check if it's a complete phrase (has multiple words or is a known single word)
+            const words = text.trim().split(/\s+/);
+            if (words.length > 1) {
+                return true;
+            }
+
+            // Check if it's a single word that exists in our translations
+            const lowerInput = text.toLowerCase().trim();
+            if (translations[lowerInput]) {
+                return true;
+            }
+
+            // Check if it's a common complete single-word query
+            const completeWords = ['hello', 'hi', 'thanks', 'yes', 'no', 'water', 'food', 'house', 'family', 'friend', 'love', 'good', 'bad', 'big', 'small', 'happy', 'sad'];
+            if (completeWords.includes(lowerInput)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                handleTranslate();
+            }
+        }
+
+        function updateSendButton() {
+            const input = document.getElementById('messageInput');
+            const button = document.getElementById('sendButton');
+            button.disabled = !input.value.trim();
+        }
+
+        // Event listeners
+        document.getElementById('messageInput').addEventListener('input', updateSendButton);
+
+        // Initialize the app when the page loads
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
