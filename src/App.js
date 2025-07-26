@@ -87,7 +87,11 @@ function App() {
 
 If natrigger mu in secret word, I want to say sorry. I never meant to hurt you in any way. I just want you to know that I'm giving you my full support in everything you do. Please keep going, stay motivated for your future, and don't lose hope even when things get hard.
 
-Always trust Allah because He knows what's best for you. Every challenge you face has a reason, and every tear you cry will be replaced with something better. I believe in you, Nalyn, and I know you can do amazing things if you keep moving forward.`,
+Always trust Allah because He knows what's best for you. Every challenge you face has a reason, and every tear you cry will be replaced with something better. I believe in you, Nalyn, and I know you can do amazing things if you keep moving forward.
+
+<img src="https://media1.tenor.com/m/GAnWQh5LnF0AAAAC/love.gif" alt="Love GIF" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">
+
+<img src="https://c.tenor.com/n8Ql8FxaWTMAAAAM/kitten-love.gif" alt="Kitten Love GIF" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">`,
           sender: 'bot',
           timestamp: new Date(),
           isSecret: true
