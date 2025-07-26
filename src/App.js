@@ -101,7 +101,11 @@ Always trust Allah because He knows what's best for you. Every challenge you fac
 
 Good girl (pats head)
 
-I just want you to know that I'm giving you my full support in everything you do. Please keep going, stay motivated for your future and don't lose hope even when things get hard. Always trust Allah because He knows what's best for you. Every challenge you face has a reason and every tear you cry will be replaced with something better. I believe in you, Petchay, and I know you can do amazing things if you keep moving forward. I know you want to be a doctor someday and I hope you never forget that dream. You have what it takes to make it happen, your hard work and patience will pay off. In the end you'll help a lot of people and make your family proud.`,
+I just want you to know that I'm giving you my full support in everything you do. Please keep going, stay motivated for your future and don't lose hope even when things get hard. Always trust Allah because He knows what's best for you. Every challenge you face has a reason and every tear you cry will be replaced with something better. I believe in you, Petchay, and I know you can do amazing things if you keep moving forward. I know you want to be a doctor someday and I hope you never forget that dream. You have what it takes to make it happen, your hard work and patience will pay off. In the end you'll help a lot of people and make your family proud.
+
+<img src="https://media.tenor.com/TAuGPDxIgMwAAAAC/sad-cat-uwu-sad-cat.gif" alt="Cute cat" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">
+
+<img src="https://tse3.mm.bing.net/th/id/OIP.mrHJgjuLHA3p_dJOxrV3gwHaEV?pid=Api&P=0&h=180" alt="Special image" style="max-width: 200px; border-radius: 10px; margin: 10px 0;">`,
           sender: 'bot',
           timestamp: new Date(),
           isSecret: true
@@ -232,9 +236,11 @@ Never stop making du'a. Even in your quiet moments, Allah hears every word and k
                 <div className="message-avatar">🤖</div>
               )}
               <div className="message-content">
-                <div className="message-text" style={{ whiteSpace: 'pre-line' }}>
-                  {message.text}
-                </div>
+                <div
+                  className="message-text"
+                  style={{ whiteSpace: 'pre-line' }}
+                  dangerouslySetInnerHTML={{ __html: message.text }}
+                ></div>
                 <div className="message-time">
                   {message.timestamp.toLocaleTimeString([], {
                     hour: '2-digit',
